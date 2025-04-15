@@ -21,7 +21,7 @@ const Chatbot = () => {
     setError(null);
 
     try {
-      const response = await fetch('https://chatbot-backend-1-ytrb.onrender.com', {
+      const response = await fetch('https://chatbot-backend-1-ytrb.onrender.com/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -29,19 +29,22 @@ const Chatbot = () => {
         })
       });
 
-      if (!response.ok) throw new Error('API request failed');
+      if (!response.ok) {
+        throw new Error('API request failed');
+      }
 
       const data = await response.json();
-      const botReply = data.choices[0].message.content;
 
+      const botReply = data.choices?.[0]?.message?.content || 'No response from AI.';
       setMessages(prev => [...prev, { text: botReply, sender: 'bot' }]);
     } catch (err) {
-      setError('Failed to get response. Please try again.');
+      setError('❌ Failed to get response. Please try again.');
       console.error('Chat error:', err);
     } finally {
       setIsLoading(false);
     }
   };
+
   const chatbotBtn = () => {
     setChatbot(prev => !prev)
   }
